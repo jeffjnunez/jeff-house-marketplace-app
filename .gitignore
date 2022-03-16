@@ -7,12 +7,16 @@
 
 # testing
 /coverage
+/src/components/BaseComponent.jsx
 
 # production
 /build
+firebase.config.js
 
 # misc
+.vscode
 .DS_Store
+.env
 .env.local
 .env.development.local
 .env.test.local
