@@ -6,16 +6,17 @@ import {
     uploadBytesResumable,
     getDownloadURL,
 } from 'firebase/storage';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { db } from '../firebase.config';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { v4 as uuidv4 } from 'uuid';
 import Spinner from '../components/Spinner';
 
-const CreateListing = () => {
+const EditListing = () => {
     const [geolocationEnabled, setGeolocationEnabled] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [listing, setListing] = useState(null);
     const [formData, setFormData] = useState({
         type: 'rent',
         name: '',
@@ -49,9 +50,43 @@ const CreateListing = () => {
     } = formData;
 
     const auth = getAuth();
+    const params = useParams();
     const navigate = useNavigate();
     const isMounted = useRef(true);
 
+    // Redirect if listing is not the current user's
+    useEffect(() => {
+        if (listing && listing.userRef !== auth.currentUser.uid) {
+            toast.error('You cannot edit that listing.');
+            navigate('/');
+        }
+    }, []);
+
+    // Fetch the listing to edit
+    useEffect(() => {
+        setLoading(true);
+
+        const fetchListing = async () => {
+            const docRef = doc(db, 'listings', params.listingId);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                setListing(docSnap.data());
+                setFormData({
+                    ...docSnap.data(),
+                    address: docSnap.data().location,
+                });
+                setLoading(false);
+            }
+            else {
+                navigate('/');
+                toast.error('Listing does not exist.');
+            }
+        }
+
+        fetchListing();
+    }, [params.listingId, navigate]);
+
+    // Sets userRef to logged in user
     useEffect(() => {
         if (isMounted) {
             onAuthStateChanged(auth, (user) => {
@@ -178,7 +213,17 @@ const CreateListing = () => {
             delete formDataCopy.discountedPrice;
         }
 
-        const docRef = await addDoc(collection(db, 'listings'), formDataCopy);
+        // TODO currently, the images associated with the existing listing
+        // are not "loaded" into the fhe edit form. An actual user would
+        // probably want to see the existing images so they could add/remove
+        // them appropriately.
+        // Will need to decide how this should function, and/or add a note
+        // for the user telling them they need to reupload any and all images
+        // when confirming their edits, since all previous image(s) will be overwritten
+        // with the newly-submitted image(s)
+
+        const docRef = doc(db, 'listings', params.listingId);
+        await updateDoc(docRef, formDataCopy);
 
         setLoading(false);
 
@@ -220,7 +265,7 @@ const CreateListing = () => {
     return (
         <div className='profile'>
             <header>
-                <p className='pageHeader'>Create a Listing</p>
+                <p className='pageHeader'>Edit Listing</p>
             </header>
             <main>
                 <form onSubmit={onSubmit}>
@@ -443,7 +488,7 @@ const CreateListing = () => {
                         className='primaryButton createListingButton'
                         type='submit'
                     >
-                        Create Listing
+                        Edit Listing
                     </button>
                 </form>
             </main>
@@ -451,4 +496,4 @@ const CreateListing = () => {
     );
 };
 
-export default CreateListing;
+export default EditListing;
