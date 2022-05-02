@@ -38,18 +38,18 @@ button {
   width: 100%;
   outline: none;
   font-family: 'Montserrat', sans-serif;
-  padding: 0 3rem;
+  padding: 0 3.5rem;
   font-size: 1rem;
 }
-@media (min-width: 1100px) {
+/* @media (min-width: 1100px) {
   .input,
   .passwordInput,
   .emailInput,
   .nameInput,
   .textarea {
-    padding: 0 5rem;
+    padding: 0 4rem;
   }
-}
+} */
 
 .textarea {
   padding: 1rem 1.5rem;
@@ -93,14 +93,21 @@ button {
 .explore {
   margin: 1rem;
 }
+
 @media (min-width: 1024px) {
-  .pageContainer,
+  /* .pageContainer, */
   .offers,
   .profile,
   .listingDetails,
   .category,
   .explore {
     margin: 3rem;
+  }
+
+  .pageContainer {
+    max-width: calc(1024px - 2rem);
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 

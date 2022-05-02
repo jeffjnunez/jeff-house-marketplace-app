@@ -5,6 +5,8 @@ import { ReactComponent as DeleteIcon } from '../assets/svg/deleteIcon.svg';
 import bedIcon from '../assets/svg/bedIcon.svg';
 import bathtubIcon from '../assets/svg/bathtubIcon.svg';
 
+import addCommasToInteger from '../addCommasToInteger';
+
 const ListingItem = ({ listing, id, onEdit, onDelete }) => {
     return (
         <li className='categoryListing'>
@@ -23,12 +25,8 @@ const ListingItem = ({ listing, id, onEdit, onDelete }) => {
                     </p>
                     <p className='categoryListingPrice'>
                         ${listing.offer
-                            ? listing.discountedPrice
-                                .toString()
-                                .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                            : listing.regularPrice
-                            .toString()
-                            .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                            ? addCommasToInteger(listing.discountedPrice)
+                            : addCommasToInteger(listing.regularPrice)}
                         {listing.type === 'rent' && ' / Month'}
                     </p>
                     <div className='categoryListingInfoDiv'>

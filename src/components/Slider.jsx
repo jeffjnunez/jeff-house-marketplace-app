@@ -8,6 +8,8 @@ import 'swiper/swiper-bundle.css';
 
 import Spinner from './Spinner';
 
+import addCommasToInteger from '../addCommasToInteger';
+
 SwiperCore.use([Navigation, Pagination, Scrollbar, A11y]);
 
 const Slider = () => {
@@ -60,7 +62,7 @@ const Slider = () => {
                         >
                             <p className='swiperSlideText'>{data.name}</p>
                             <p className='swiperSlidePrice'>
-                                ${data.discountedPrice ?? data.regularPrice}
+                                ${addCommasToInteger(data.discountedPrice ?? data.regularPrice)}
                                 {data.type === 'rent' && ' / Month'}
                             </p>
                         </div>

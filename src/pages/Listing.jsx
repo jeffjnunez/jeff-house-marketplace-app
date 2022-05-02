@@ -11,6 +11,8 @@ import 'swiper/swiper-bundle.css';
 import Spinner from '../components/Spinner';
 import shareIcon from '../assets/svg/shareIcon.svg';
 
+import addCommasToInteger from '../addCommasToInteger';
+
 SwiperCore.use([Navigation, Pagination, Scrollbar, A11y]);
 
 const Listing = () => {
@@ -74,12 +76,8 @@ const Listing = () => {
             <div className='listingDetails'>
                 <p className='listingName'>{listing.name} - $
                     {listing.offer
-                        ? listing.discountedPrice
-                            .toString()
-                            .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                        : listing.regularPrice
-                            .toString()
-                            .replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        ? addCommasToInteger(listing.discountedPrice)
+                        : addCommasToInteger(listing.regularPrice)}
                 </p>
                 <p className='listingLocation'>{listing.location}</p>
                 <p className='listingType'>
@@ -87,10 +85,7 @@ const Listing = () => {
                 </p>
                 {listing.offer && (
                     <p className='discountPrice'>
-                        ${(listing.regularPrice - listing.discountedPrice)
-                            .toString()
-                            .replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                        } discount
+                        ${addCommasToInteger(listing.regularPrice - listing.discountedPrice)} discount
                     </p>
                 )}
 
